@@ -27,9 +27,11 @@ namespace Transmutate {
 			if(Module.Globals.Length != 0)
 				code += "\n";
 			
-			Module.Functions.ForEach((func, i) => code += Rewrite(i, func));
+			var fimp = Module.Imports.Count(x => x.Kind == ExternalKind.Function);
+			Module.Functions.ForEach((func, i) => code += Rewrite(i + fimp, func));
 			code += "\t}\n";
 			code += "}";
+			Console.WriteLine(code);
 			return code;
 		}
 
@@ -43,16 +45,19 @@ namespace Transmutate {
 			void Add(string stmt) => code += new string('\t', depth) + stmt + ";\n";
 			void Push(string expr) => stack.Push(expr);
 			string Pop() => stack.Pop();
+			
+			func.Print();
 
+			Module.Exports.Print();
 			var ef = Module.Exports.FirstOrDefault(x => x.Kind == ExternalKind.Function && x.Index == fnum);
 			var fname = ef != null
 				? ef.FieldName
 				: $"f{fnum - Module.Exports.Count(x => x.Kind == ExternalKind.Function)}";
 			
 			if(fname == "__post_instantiate")
-				StartBlock($"static {Class}()");
+				StartBlock($"unsafe static {Class}()");
 			else
-				StartBlock($"public static {Rewrite(func.Signature.ReturnType)} {fname}({string.Join(", ", func.Signature.ParamTypes.Select((x, i) => $"{Rewrite(x)} p{i}"))})");
+				StartBlock($"public unsafe static {Rewrite(func.Signature.ReturnType)} {fname}({string.Join(", ", func.Signature.ParamTypes.Select((x, i) => $"{Rewrite(x)} p{i}"))})");
 			
 			string LocalName(uint num) =>
 				num < func.Signature.ParamTypes.Length
@@ -69,12 +74,19 @@ namespace Transmutate {
 
 			void ToBool() => Push($"({Pop()}) ? 1 : 0");
 
+			void Swap() {
+				var (b, a) = (Pop(), Pop());
+				Push(b);
+				Push(a);
+			}
+
 			foreach(var _inst in func.Instructions) {
 				switch(_inst) {
 					case Instruction<uint> inst when inst == Opcode.get_global: Push(GlobalName(inst.Operand)); break;
 					case Instruction<uint> inst when inst == Opcode.set_global: Add($"{GlobalName(inst.Operand)} = {Pop()}"); break;
 					case Instruction<uint> inst when inst == Opcode.get_local: Push(LocalName(inst.Operand)); break;
 					case Instruction<uint> inst when inst == Opcode.set_local: Add($"{LocalName(inst.Operand)} = {Pop()}"); break;
+					case Instruction<uint> inst when inst == Opcode.tee_local: Push($"({LocalName(inst.Operand)} = {Pop()})"); break;
 					case Instruction<int> inst when inst == Opcode.i32_const: Push(inst.Operand.ToString()); break;
 					case Instruction<WasmType> inst when inst == Opcode.@if: StartBlock($"if(({Pop()}) != 0)"); break;
 					case Instruction<uint> inst when inst == Opcode.call:
@@ -85,6 +97,14 @@ namespace Transmutate {
 							Add(c);
 						else
 							Push(c);
+						break;
+					case Instruction<(uint Alignment, uint Offset)> inst:
+						switch(inst.Op) {
+							case Opcode.i32_store: Swap(); Add($"__Store({Pop()}, {Pop()})"); break;
+							case Opcode.i32_load: Push($"__Load({Pop()})"); break;
+							default:
+								throw new NotImplementedException($"Unhandled instruction: {_inst.ToPrettyString()}");
+						}
 						break;
 					default:
 						switch(_inst.Op) {

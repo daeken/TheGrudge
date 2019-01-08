@@ -174,36 +174,41 @@ namespace WasmReader {
 						VarU1();
 						break;
 
-					case Opcode.i32_load: throw new NotImplementedException();
-					case Opcode.i64_load: throw new NotImplementedException();
-					case Opcode.f32_load: throw new NotImplementedException();
-					case Opcode.f64_load: throw new NotImplementedException();
-					case Opcode.i32_load8_s: throw new NotImplementedException();
-					case Opcode.i32_load8_u: throw new NotImplementedException();
-					case Opcode.i32_load16_s: throw new NotImplementedException();
-					case Opcode.i32_load16_u: throw new NotImplementedException();
-					case Opcode.i64_load8_s: throw new NotImplementedException();
-					case Opcode.i64_load8_u: throw new NotImplementedException();
-					case Opcode.i64_load16_s: throw new NotImplementedException();
-					case Opcode.i64_load16_u: throw new NotImplementedException();
-					case Opcode.i64_load32_s: throw new NotImplementedException();
-					case Opcode.i64_load32_u: throw new NotImplementedException();
-					case Opcode.i32_store: throw new NotImplementedException();
-					case Opcode.i64_store: throw new NotImplementedException();
-					case Opcode.f32_store: throw new NotImplementedException();
-					case Opcode.f64_store: throw new NotImplementedException();
-					case Opcode.i32_store8: throw new NotImplementedException();
-					case Opcode.i32_store16: throw new NotImplementedException();
-					case Opcode.i64_store8: throw new NotImplementedException();
-					case Opcode.i64_store16: throw new NotImplementedException();
-					case Opcode.i64_store32: throw new NotImplementedException();
+					case Opcode.i32_load:
+					case Opcode.i64_load:
+					case Opcode.f32_load:
+					case Opcode.f64_load:
+					case Opcode.i32_load8_s:
+					case Opcode.i32_load8_u:
+					case Opcode.i32_load16_s:
+					case Opcode.i32_load16_u:
+					case Opcode.i64_load8_s:
+					case Opcode.i64_load8_u:
+					case Opcode.i64_load16_s:
+					case Opcode.i64_load16_u:
+					case Opcode.i64_load32_s:
+					case Opcode.i64_load32_u:
+					case Opcode.i32_store:
+					case Opcode.i64_store:
+					case Opcode.f32_store:
+					case Opcode.f64_store:
+					case Opcode.i32_store8:
+					case Opcode.i32_store16:
+					case Opcode.i64_store8:
+					case Opcode.i64_store16:
+					case Opcode.i64_store32:
+						Add(ParseMemoryImmediate());
+						break;
 					case Opcode.current_memory: throw new NotImplementedException();
-					case Opcode.grow_memory: throw new NotImplementedException();
+					case Opcode.grow_memory:    throw new NotImplementedException();
 
 					case Opcode x: insts.Add(new Instruction(x)); break;
 				}
 			}
 		}
+
+		(uint Flags, uint Offset) ParseMemoryImmediate() =>
+			(VarU32(), VarU32());
 
 		bool VarU1() => Br.ReadByte() != 0;
 		byte VarU7() {

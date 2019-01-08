@@ -4,7 +4,7 @@ using TestNS;
 namespace TestApp {
 	class Program {
 		static void Main(string[] args) {
-			Console.WriteLine(TestModule._addTest(4, 123));
+			Console.WriteLine(TestModule._addPointerTest(5, 6));
 		}
 	}
 }
