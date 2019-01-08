@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="MyAssembly">
+            <HintPath>../CliReader/testModule.dll</HintPath>
+        </Reference>
+        <Reference Include="testModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\CliReader\testModule.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\WasmBootstrap\WasmBootstrap.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp2.1</TargetFramework>
+        <PreserveCompilationContext>true</PreserveCompilationContext>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Transmutate\Transmutate.csproj" />
+      <ProjectReference Include="..\WasmBootstrap\WasmBootstrap.csproj" />
+      <ProjectReference Include="..\WasmReader\WasmReader.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.10.0" />
+      <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.10.0" />
+      <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.1.0" />
+    </ItemGroup>
+
+</Project>
