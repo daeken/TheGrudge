@@ -199,8 +199,8 @@ namespace WasmReader {
 					case Opcode.i64_store32:
 						Add(ParseMemoryImmediate());
 						break;
-					case Opcode.current_memory: throw new NotImplementedException();
-					case Opcode.grow_memory:    throw new NotImplementedException();
+					case Opcode.current_memory: Add(VarU1()); break;
+					case Opcode.grow_memory:    Add(VarU1()); break;
 
 					case Opcode x: insts.Add(new Instruction(x)); break;
 				}
