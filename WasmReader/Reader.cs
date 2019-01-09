@@ -166,7 +166,10 @@ namespace WasmReader {
 					case Opcode.@if: Add(ParseType()); depth++; break;
 					case Opcode.br: Add(VarU32()); break;
 					case Opcode.br_if: Add(VarU32()); break;
-					case Opcode.br_table: throw new NotImplementedException();
+					case Opcode.br_table: Add((
+							Table: Enumerable.Range(0, (int) VarU32()).Select(_ => VarU32()).ToArray(), 
+							Default: VarU32()
+						)); break;
 					
 					case Opcode.call: Add(VarU32()); break;
 					case Opcode.call_indirect:

@@ -30,7 +30,8 @@ namespace CliReader {
 			var res = compilation.Emit(args[1]);
 			if(!res.Success)
 				foreach(var issue in res.Diagnostics)
-					Console.WriteLine($"ID: {issue.Id} Message: {issue.GetMessage()} Location: {issue.Location.GetLineSpan()} Severity: {issue.Severity}");
+					if(issue.Severity == DiagnosticSeverity.Error)
+						Console.WriteLine($"ID: {issue.Id} Message: {issue.GetMessage()} Location: {issue.Location.GetLineSpan()} Severity: {issue.Severity}");
 		}
 	}
 }

@@ -16,6 +16,12 @@ namespace WasmBootstrap {
 		public static int __errno;
 		public static void ___setErrNo(int errno) => __errno = errno;
 
+		public static void ___assert_fail(int condition, int filename, int line, int func) =>
+			throw new Exception($"___assert_fail({condition}, {filename}, {line}, {func})");
+		
+		public static void abort(int v) => throw new Exception($"Abort {v}");
+		public static void _abort() => throw new Exception("Abort");
+
 		public static int growMemory(int pages) {
 			var old = MemorySize / 65536;
 			MemorySize = pages * 65536;
@@ -47,9 +53,35 @@ namespace WasmBootstrap {
 		public static void __Storei32(int addr, int value) => Checked(addr, 4, () => *(int*) (addr - __memory_base + ActualMemoryBase) = value);
 		public static int __Loadi32(int addr) => Checked(addr, 4, () => *(int*) (addr - __memory_base + ActualMemoryBase));
 		public static void __Storei32_8(int addr, int value) => Checked(addr, 1, () => *(addr - __memory_base + ActualMemoryBase) = unchecked((byte) (uint) value));
-		public static int __Loadi32_8(int addr) => Checked(addr, 1, () => *(addr - __memory_base + ActualMemoryBase));
+		public static int __Loadi32_8s(int addr) => Checked(addr, 1, () => *(sbyte*) (addr - __memory_base + ActualMemoryBase));
+		public static int __Loadi32_8u(int addr) => Checked(addr, 1, () => *(addr - __memory_base + ActualMemoryBase));
+		public static void __Storei32_16(int addr, int value) => Checked(addr, 2, () => *(ushort*)(addr - __memory_base + ActualMemoryBase) = unchecked((ushort) (uint) value));
+		public static int __Loadi32_16s(int addr) => Checked(addr, 2, () => *(short*) (addr - __memory_base + ActualMemoryBase));
+		public static int __Loadi32_16u(int addr) => Checked(addr, 2, () => *(ushort*) (addr - __memory_base + ActualMemoryBase));
 		public static void __Storei64(int addr, long value) => Checked(addr, 8, () => *(long*) (addr - __memory_base + ActualMemoryBase) = value);
 		public static long __Loadi64(int addr) => Checked(addr, 8, () => *(long*) (addr - __memory_base + ActualMemoryBase));
+		public static void __Storei64_8(int addr, long value) => Checked(addr, 1, () => *(addr - __memory_base + ActualMemoryBase) = unchecked((byte) (uint) value));
+		public static long __Loadi64_8s(int addr) => Checked(addr, 1, () => *(sbyte*) (addr - __memory_base + ActualMemoryBase));
+		public static long __Loadi64_8u(int addr) => Checked(addr, 1, () => *(addr - __memory_base + ActualMemoryBase));
+		public static void __Storei64_16(int addr, long value) => Checked(addr, 2, () => *(ushort*)(addr - __memory_base + ActualMemoryBase) = unchecked((ushort) (uint) value));
+		public static long __Loadi64_16s(int addr) => Checked(addr, 2, () => *(short*) (addr - __memory_base + ActualMemoryBase));
+		public static long __Loadi64_16u(int addr) => Checked(addr, 2, () => *(ushort*) (addr - __memory_base + ActualMemoryBase));
+		public static void __Storei64_32(int addr, long value) => Checked(addr, 4, () => *(ushort*)(addr - __memory_base + ActualMemoryBase) = unchecked((ushort) (uint) value));
+		public static long __Loadi64_32s(int addr) => Checked(addr, 4, () => *(int*) (addr - __memory_base + ActualMemoryBase));
+		public static long __Loadi64_32u(int addr) => Checked(addr, 4, () => *(uint*) (addr - __memory_base + ActualMemoryBase));
+		public static void __Storef32(int addr, float value) => Checked(addr, 4, () => *(float*) (addr - __memory_base + ActualMemoryBase) = value);
+		public static float __Loadf32(int addr) => Checked(addr, 4, () => *(float*) (addr - __memory_base + ActualMemoryBase));
+		public static void __Storef64(int addr, double value) => Checked(addr, 8, () => *(double*) (addr - __memory_base + ActualMemoryBase) = value);
+		public static double __Loadf64(int addr) => Checked(addr, 8, () => *(double*) (addr - __memory_base + ActualMemoryBase));
+
+		public static int Reinterpret_i32(float value) => *(int*) &value;
+		public static float Reinterpret_f32(int value) => *(float*) &value;
+		public static float Reinterpret_f32(uint value) => *(float*) &value;
+		public static long Reinterpret_i64(float value) => *(long*) &value;
+		public static double Reinterpret_f64(long value) => *(double*) &value;
+		public static double Reinterpret_f64(ulong value) => *(double*) &value;
+
+		public static double f64_rem(double v, double m) => v % m;
 
 		public static object[] table;
 		
